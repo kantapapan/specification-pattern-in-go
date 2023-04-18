@@ -1,4 +1,4 @@
-package spec
+package main
 
 // Invoice ...
 type Invoice struct {
@@ -97,7 +97,7 @@ type NotSpecification struct {
 
 // IsSatisfiedBy ...
 func (s *NotSpecification) IsSatisfiedBy(elm Invoice) bool {
-	return s.Specification.IsSatisfiedBy(elm)
+	return !s.Specification.IsSatisfiedBy(elm)
 }
 
 /////
