@@ -1,36 +1,51 @@
-## specification-pattern-in-go
+# Specification Pattern in Go
 
-このコードは、Go言語でSpecificationパターンを実装する例です。Specificationパターンは、ビジネスルールをカプセル化し、組み合わせ可能な方法で表現するデザインパターンです。以下にコードの各部分の説明を示します。
+This repository demonstrates an implementation of the **Specification Pattern** in Go. The Specification Pattern encapsulates business rules in a reusable and composable way, making it easier to express complex logic. This README is written to be accessible to both Japanese and international engineers.
 
-### 基本構造体
+---
 
-- `Invoice`構造体: 請求書を表す構造体です。`Day`、`Notice`、および`IsSent`といったプロパティを持っています。
+## Overview
 
-### Specificationインターフェース
+### Core Structures
 
-- `Specification`インターフェース: すべての仕様に共通のメソッドを定義します。これには、`IsSatisfiedBy`、`And`、`Or`、`Not`、および`Relate`メソッドが含まれます。
+- **`Invoice` struct**: Represents an invoice with the following properties:
+  - `Day`: Number of days since the invoice was issued.
+  - `Notice`: Number of notices sent.
+  - `IsSent`: Whether the invoice has been collected (`true` if collected).
 
-### 基本仕様
+### Specification Interface
 
-- `BaseSpecification`構造体: すべての具体的な仕様が継承する基本的な仕様です。`Specification`インターフェースのメソッドをデフォルトで実装しています。
+The `Specification` interface defines the following methods:
 
-### 複合仕様
+- `IsSatisfiedBy(Invoice) bool`: Checks if the specification is satisfied by a given invoice.
+- `And(Specification) Specification`: Combines two specifications with an AND condition.
+- `Or(Specification) Specification`: Combines two specifications with an OR condition.
+- `Not() Specification`: Negates a specification.
+- `Relate(Specification)`: Relates specifications internally (optional for advanced use).
 
-- `AndSpecification`構造体: 2つの仕様が両方とも満たされている場合に満たされる仕様を表します。
-- `OrSpecification`構造体: 2つの仕様のいずれかが満たされている場合に満たされる仕様を表します。
-- `NotSpecification`構造体: 与えられた仕様が満たされていない場合に満たされる仕様を表します。
+### Base Specification
 
-### 具体的な仕様
+- **`BaseSpecification` struct**: A base implementation of the `Specification` interface. All concrete specifications inherit from this base.
 
-- `OverDueSpecification`構造体: 請求日から30日以上経過した請求書を表す仕様です。
-- `NoticeSentSpecification`構造体: 通知が3回以上送信された請求書を表す仕様です。
-- `InCollectionSpecification`構造体: まだ回収されていない請求書を表す仕様です。
+### Composite Specifications
 
-これらの仕様は、複雑なビジネスルールを効率的に表現し、組み合わせることができます。例えば、`OverDueSpecification`と`NoticeSentSpecification`を組み合わせて、期限切れで通知が3回以上送信された請求書を特定することができます。
+- **`AndSpecification`**: Satisfied when both specifications are met.
+- **`OrSpecification`**: Satisfied when at least one specification is met.
+- **`NotSpecification`**: Satisfied when the given specification is not met.
 
-## 使用例
+### Concrete Specifications
 
-Specificationパターンを使用して、複雑なビジネスルールを簡単に表現できます。以下に、実装した仕様を使用して複数の条件を組み合わせる例を示します。
+- **`OverDueSpecification`**: Satisfied when the invoice is overdue (e.g., more than 30 days).
+- **`NoticeSentSpecification`**: Satisfied when the invoice has received at least 3 notices.
+- **`InCollectionSpecification`**: Satisfied when the invoice has not yet been collected.
+
+These specifications can be combined to express complex business rules.
+
+---
+
+## Example Usage
+
+The following example demonstrates how to use the Specification Pattern to filter invoices based on multiple conditions:
 
 ```go
 package main
@@ -61,8 +76,45 @@ func main() {
 	}
 }
 ```
-この例では、OverDueSpecification、NoticeSentSpecification、およびInCollectionSpecificationを組み合わせて、期限切れで通知が送信され、まだ回収されていない請求書を特定します。
-このように、Specificationパターンを使用することで、ビジネスルールを効率的に表現し、組み合わせることができます。
+
+### Explanation
+
+In this example:
+- `OverDueSpecification` checks if the invoice is overdue.
+- `NoticeSentSpecification` checks if at least 3 notices have been sent.
+- `InCollectionSpecification` checks if the invoice has not been collected.
+
+The combined specification (`criticalInvoices`) identifies invoices that are overdue, have received notices, and are still uncollected.
+
+---
+
+## Why Use the Specification Pattern?
+
+- **Reusability**: Specifications can be reused across different parts of the application.
+- **Composability**: Combine specifications using logical operators (AND, OR, NOT).
+- **Readability**: Business rules are expressed in a clear and declarative manner.
+
+---
+
+## Running Tests
+
+To ensure the implementation works as expected, run the tests using the following command:
+
+```bash
+go test ./...
+```
+
+---
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 
 
